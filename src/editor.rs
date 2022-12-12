@@ -1,3 +1,4 @@
+use std::fs::DirEntry;
 use std::io::{self, stdout};
 use termion::event::Key;
 use termion::input::TermRead;
@@ -7,29 +8,35 @@ pub struct Editor {}
 impl Editor {
     pub fn run(&self) {
         let _stdout = stdout().into_raw_mode().unwrap();
-
-        for key in io::stdin().keys() {
-            match key {
-                Ok(key) => match key {
-                    Key::Char(c) => {
-                        if c.is_control() {
-                            println!("{:?}\r", c as u8);
-                        } else {
-                            println!("{:?} ({})\r", c as u8, c);
-                        }
-                    }
-                    Key::Ctrl('q') => break,
-                    _ => println!("{:?}\r", key),
-                },
-                Err(err) => die(err),
+        // loop
+        loop {
+            if let Err(error) = self.process_keypress() {
+                die(&error);
             }
         }
     }
     pub fn default() -> Self {
-        Editor {}
+        Self {}
+    }
+    fn process_keypress(&self) -> Result<(), io::Error> {
+        let pressed_key = read_key()?;
+        match pressed_key {
+            Key::Ctrl('q') => panic!("Program End"),
+            _ => (),
+        }
+        Ok(())
     }
 }
 
-fn die(e: std::io::Error) {
+fn read_key() -> Result<Key, io::Error> {
+    let stdin = io::stdin();
+    let mut keys = stdin.keys();
+    match keys.next() {
+        Some(key) => key,
+        None => Err(io::Error::new(io::ErrorKind::Other, "Failed to read key")),
+    }
+}
+
+fn die(e: &std::io::Error) {
     panic!("{}", e)
 }
