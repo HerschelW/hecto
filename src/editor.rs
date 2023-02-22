@@ -32,11 +32,10 @@ impl Editor {
 }
 
 fn read_key() -> Result<Key, io::Error> {
-    let stdin = io::stdin();
-    let mut keys = stdin.keys();
-    match keys.next() {
-        Some(key) => key,
-        None => Err(io::Error::new(io::ErrorKind::Other, "Failed to read key")),
+    loop {
+        if let Some(key) = io::stdin().lock().keys().next() {
+            return key;
+        }
     }
 }
 
