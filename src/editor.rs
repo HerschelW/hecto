@@ -1,5 +1,4 @@
-use std::fs::DirEntry;
-use std::io::{self, stdout, Write};
+use std::io::{self, stdout};
 use termion::event::Key;
 use termion::input::TermRead;
 use termion::raw::IntoRawMode;
@@ -25,9 +24,8 @@ impl Editor {
     }
     fn process_keypress(&mut self) -> Result<(), io::Error> {
         let pressed_key = read_key()?;
-        match pressed_key {
-            Key::Ctrl('q') => self.should_quit = true,
-            _ => (),
+        if let Key::Ctrl('q') = pressed_key {
+            self.should_quit = true;
         }
         Ok(())
     }
