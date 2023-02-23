@@ -10,16 +10,17 @@ impl Editor {
     pub fn run(&mut self) {
         loop {
             if let Err(error) = self.refresh_screen() {
-                die(error);
+                die(&error);
             }
             if self.should_quit {
                 break;
             }
             if let Err(error) = self.process_keypress() {
-                die(error);
+                die(&error);
             }
         }
     }
+
     pub fn default() -> Self {
         Self {
             should_quit: false,
@@ -38,22 +39,23 @@ impl Editor {
         }
         Terminal::flush()
     }
+
     fn process_keypress(&mut self) -> Result<(), std::io::Error> {
         let pressed_key = Terminal::read_key()?;
-        match pressed_key {
-            Key::Ctrl('q') => self.should_quit = true,
-            _ => (),
-        }
+        if let Key::Ctrl('q') = pressed_key {
+            self.should_quit = true;
+        };
         Ok(())
     }
+
     fn draw_rows(&self) {
-        for _ in 0..self.terminal.size().height {
+        for _ in 0..self.terminal.size().height - 1 {
             println!("~\r");
         }
     }
 }
 
-fn die(e: std::io::Error) {
+fn die(e: &std::io::Error) {
     Terminal::clear_screen();
     panic!("{}", e);
 }
