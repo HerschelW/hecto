@@ -101,7 +101,7 @@ impl Editor {
     }
 
     fn draw_welcome_message(&self) {
-        let mut welcome_message = format!("Hecto editor -- version {}", VERSION);
+        let mut welcome_message = format!("Hecto editor -- version {VERSION}");
         let width = self.terminal.size().width;
         let mut welcome_message_length = welcome_message.len();
         if welcome_message_length > width as usize {
@@ -110,9 +110,9 @@ impl Editor {
         }
         let padding = (width as usize - welcome_message_length) / 2;
         if padding > 0 {
-            welcome_message = format!("~{}", welcome_message);
+            welcome_message = format!("~{welcome_message}");
         }
-        println!("{}\r", welcome_message);
+        println!("{welcome_message}\r");
     }
 
     fn draw_rows(&self) {
