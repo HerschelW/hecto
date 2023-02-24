@@ -37,7 +37,7 @@ impl Editor {
         Self {
             should_quit: false,
             terminal: Terminal::default().expect("Failed to initialize terminal"),
-            document: Document::open(),
+            document: Document::default(),
             cursor_position: Position::default(),
         }
     }
@@ -129,7 +129,7 @@ impl Editor {
             Terminal::clear_current_line();
             if let Some(row) = self.document.row(terminal_row as usize) {
                 self.draw_row(row);
-            } else if terminal_row == height / 3 {
+            } else if self.document.is_empty() && terminal_row == height / 3 {
                 self.draw_welcome_message();
             } else {
                 println!("~\r");

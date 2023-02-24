@@ -1,4 +1,5 @@
 use crate::Row;
+use std::fs;
 
 #[derive(Default)]
 pub struct Document {
@@ -7,14 +8,22 @@ pub struct Document {
 
 impl Document {
     #[must_use]
-    pub fn open() -> Self {
+    pub fn open(filename: &str) -> Result<Self, std::io::Error> {
         let mut rows = vec![];
-        rows.push(Row::from("Hello, World!"));
-        Self { rows }
+        let contents = fs::read_to_string(filename)?;
+        for value in contents.lines() {
+            rows.push(Row::from(value));
+        }
+        Ok(Self { rows })
     }
 
     #[must_use]
     pub fn row(&self, index: usize) -> Option<&Row> {
         self.rows.get(index)
+    }
+
+    #[must_use]
+    pub fn is_empty(&self) -> bool {
+        self.rows.is_empty()
     }
 }
